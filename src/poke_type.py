@@ -1,7 +1,24 @@
-from src.base_type import BaseType
-from src.type_array import TypeArray
+from enum import IntEnum, unique
 
 
-class PokeType:
-    def __init__(self, type_: TypeArray):
-        self.type = type_
+@unique
+class PokeType(IntEnum):
+    Normal = 0
+    Fighting = 1
+    Flying = 2
+    Poison = 3
+    Ground = 4
+    Rock = 5
+    Bug = 6
+    Ghost = 7
+    Steel = 8
+    Fire = 9
+    Water = 10
+    Grass = 11
+    Electric = 12
+    Psychic = 13
+    Ice = 14
+    Dragon = 15
+    Dark = 16
+    Fairy = 17
+    Unknown = 18

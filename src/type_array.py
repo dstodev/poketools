@@ -2,19 +2,19 @@ import typing
 
 import numpy as np
 
-from src.base_type import BaseType
+from src.poke_type import PokeType
 from src.typecharts.VI import matrix
 
 
 class TypeArray:
-    def __init__(self, types: typing.Iterable[BaseType] = None):
+    def __init__(self, types: typing.Iterable[PokeType] = None):
         if types == None:
             types = []
 
         self.types = types
 
     @staticmethod
-    def get_type_vector(types: typing.Iterable[BaseType]) -> np.ndarray:
+    def get_type_vector(types: typing.Iterable[PokeType]) -> np.ndarray:
         type_vector = np.zeros_like(matrix[0], dtype=int)
 
         for i in types:
@@ -23,24 +23,29 @@ class TypeArray:
         return type_vector
 
     @staticmethod
-    def get_type_multipliers(type_: BaseType, types: typing.Iterable[BaseType]):
-        multipliers = matrix[type_, types]
+    def get_type_interaction_multipliers(target_type: PokeType, interacting_types: typing.Iterable[PokeType]):
+        multipliers = matrix[target_type, interacting_types]
         effects = {}
 
-        for i, interacting_type in enumerate(types):
-            effects[interacting_type] = multipliers[i]
+        for i, type_ in enumerate(interacting_types):
+            effects[type_] = multipliers[i]
 
         return effects
 
-    def interacts_with(self, types: typing.Iterable[BaseType], separate: bool = False):
-        effectives = {}
+    @staticmethod
+    def get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]):
+        multipliers = matrix[target_type, interacting_types]
+
+        return np.prod(multipliers)
+
+    def interacts_with(self, interacting_types: typing.Iterable[PokeType], separate: bool = False):
+        interactions = {}
 
         for type_ in self.types:
             if separate:
-                effectives[type_] = self.get_type_multipliers(type_, types)
+                interactions[type_] = self.get_type_interaction_multipliers(type_, interacting_types)
 
             else:
-                multipliers = matrix[type_, types]
-                effectives[type_] = np.prod(multipliers)
+                interactions[type_] = self.get_type_interaction_product(type_, interacting_types)
 
-        return effectives
+        return interactions
