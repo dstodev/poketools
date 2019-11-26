@@ -1,9 +1,11 @@
 import typing
+import operator
 
 import numpy as np
 
 from src.poketype import PokeType
 from src.typecharts.VI import matrix
+from src.util import merge_dicts_with
 
 
 class TypeList:
@@ -14,7 +16,7 @@ class TypeList:
         self.types = sorted(types)
 
     @staticmethod
-    def get_type_interaction_multipliers(target_type: PokeType, interacting_types: typing.Iterable[PokeType]):
+    def get_type_interaction_multipliers(target_type: PokeType, interacting_types: typing.Iterable[PokeType]) -> dict:
         multipliers = matrix[target_type, interacting_types]
         effects = {}
 
@@ -24,13 +26,36 @@ class TypeList:
         return effects
 
     @staticmethod
-    def get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]):
+    def get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]) -> dict:
         multipliers = matrix[target_type, interacting_types]
 
         key = sorted(interacting_types)
         key = tuple(key)
 
         return {key: np.prod(multipliers)}
+
+    @staticmethod
+    def get_all_type_interactions(target_type: PokeType, target_self: bool) -> np.ma.masked_array:
+        if target_self:
+            array = matrix.transpose()
+        else:
+            array = matrix
+
+        array = array[target_type]
+        array = np.ma.masked_equal(array, 1)
+
+        return array
+
+    @classmethod
+    def get_all_type_interactions_by_multiplier(cls, target_type: PokeType, target_self: bool):
+        array = cls.get_all_type_interactions(target_type, target_self)
+        effects = {}
+
+        for (i, multiplier), masked in zip(np.ndenumerate(array), array.mask):
+            if not masked:
+                effects[PokeType(i[0])] = multiplier
+
+        return effects
 
     def interacts_with(self, interacting_types: typing.Iterable[PokeType], aggregate: bool = True):
         interactions = {}
@@ -43,19 +68,19 @@ class TypeList:
 
         return interactions
 
-    def get_interacting_types(self):
+    def get_all_interactions(self, strengths: bool = True, aggregate: bool = True):
         interactions = {}
 
+        if aggregate:
+            key = tuple(self.types)
+            interactions[key] = {}
+
         for type_ in self.types:
-            array = matrix.transpose()
-            array = array[type_]
-            array = np.ma.masked_equal(array, 1)  # type: np.ma.masked_array
+            if aggregate:
+                temp = self.get_all_type_interactions_by_multiplier(type_, not strengths)
+                interactions[key] = merge_dicts_with(operator.mul, interactions[key], temp)
 
-            effects = {}
-            for (i, multiplier), masked in zip(np.ndenumerate(array), array.mask):
-                if not masked:
-                    effects[PokeType(i[0])] = multiplier
-
-            interactions[type_] = effects
+            else:
+                interactions[type_] = self.get_all_type_interactions_by_multiplier(type_, not strengths)
 
         return interactions
