@@ -1,9 +1,11 @@
-from src.poke_type import PokeType
-from src.type_array import TypeArray
+from src.poketype import PokeType
+from src.typearray import TypeList
 
 if __name__ == "__main__":
-    t = TypeArray([PokeType.Fighting])
-    multipliers = t.interacts_with([PokeType.Normal, PokeType.Bug], True)
-    product = t.interacts_with([PokeType.Normal, PokeType.Bug], False)
+    t = TypeList([PokeType.Fighting])
+    multipliers = t.interacts_with([PokeType.Normal, PokeType.Bug], False)
+    product = t.interacts_with([PokeType.Normal, PokeType.Bug], True)
+
+    types = t.get_interacting_types()
 
     pass
