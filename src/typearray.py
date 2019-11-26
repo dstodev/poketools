@@ -29,10 +29,9 @@ class TypeList:
     def get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]) -> dict:
         multipliers = matrix[target_type, interacting_types]
 
-        key = sorted(interacting_types)
-        key = tuple(key)
+        product = np.prod(multipliers)
 
-        return {key: np.prod(multipliers)}
+        return product
 
     @staticmethod
     def get_all_type_interactions(target_type: PokeType, target_self: bool) -> np.ma.masked_array:
@@ -71,16 +70,12 @@ class TypeList:
     def get_all_interactions(self, strengths: bool = True, aggregate: bool = True):
         interactions = {}
 
-        if aggregate:
-            key = tuple(self.types)
-            interactions[key] = {}
-
         for type_ in self.types:
-            if aggregate:
-                temp = self.get_all_type_interactions_by_multiplier(type_, not strengths)
-                interactions[key] = merge_dicts_with(operator.mul, interactions[key], temp)
+            type_interactions = self.get_all_type_interactions_by_multiplier(type_, not strengths)
 
+            if aggregate:
+                interactions = merge_dicts_with(operator.mul, interactions, type_interactions)
             else:
-                interactions[type_] = self.get_all_type_interactions_by_multiplier(type_, not strengths)
+                interactions[type_] = type_interactions
 
         return interactions

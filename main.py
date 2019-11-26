@@ -6,6 +6,6 @@ if __name__ == "__main__":
     multipliers = t.interacts_with([PokeType.Normal, PokeType.Bug], False)
     product = t.interacts_with([PokeType.Normal, PokeType.Bug], True)
 
-    types = t.get_all_interactions(False)
+    types = t.get_all_interactions()
 
     pass
