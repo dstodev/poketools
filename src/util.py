@@ -1,7 +1,7 @@
 import typing
 
 
-def merge_dicts_with(op: typing.Callable, *dict_list: dict) -> dict:
+def merge_symmetric_dict_values_by(op: typing.Callable, *dict_list: dict) -> dict:
     updated = {}
 
     for dict_ in dict_list:

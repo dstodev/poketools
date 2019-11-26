@@ -5,7 +5,7 @@ import numpy as np
 
 from src.poketype import PokeType
 from src.typecharts.VI import matrix
-from src.util import merge_dicts_with
+from src.util import merge_symmetric_dict_values_by
 
 
 class TypeList:
@@ -67,7 +67,7 @@ class TypeList:
             type_interactions = self.get_all_type_interactions(type_, not strengths)
 
             if aggregate:
-                interactions = merge_dicts_with(operator.mul, interactions, type_interactions)
+                interactions = merge_symmetric_dict_values_by(operator.mul, interactions, type_interactions)
             else:
                 interactions[type_] = type_interactions
 
