@@ -34,25 +34,18 @@ class TypeList:
         return product
 
     @staticmethod
-    def get_all_type_interactions(target_type: PokeType, target_self: bool) -> np.ma.masked_array:
+    def get_all_type_interactions(target_type: PokeType, target_self: bool):
         if target_self:
             array = matrix.transpose()
         else:
             array = matrix
 
         array = array[target_type]
-        array = np.ma.masked_equal(array, 1)
 
-        return array
-
-    @classmethod
-    def get_all_type_interactions_by_multiplier(cls, target_type: PokeType, target_self: bool):
-        array = cls.get_all_type_interactions(target_type, target_self)
         effects = {}
-
-        for (i, multiplier), masked in zip(np.ndenumerate(array), array.mask):
-            if not masked:
-                effects[PokeType(i[0])] = multiplier
+        for i, multiplier in enumerate(array):
+            if multiplier != 1:
+                effects[PokeType(i)] = multiplier
 
         return effects
 
@@ -71,7 +64,7 @@ class TypeList:
         interactions = {}
 
         for type_ in self.types:
-            type_interactions = self.get_all_type_interactions_by_multiplier(type_, not strengths)
+            type_interactions = self.get_all_type_interactions(type_, not strengths)
 
             if aggregate:
                 interactions = merge_dicts_with(operator.mul, interactions, type_interactions)
