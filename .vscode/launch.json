@@ -5,10 +5,14 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Python: Entrypoint",
+			"name": "Python: CLI Test",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/main.py",
+			"program": "${workspaceFolder}/cli.py",
+			"args": [
+				"Water",
+				"Rock"
+			],
 			"console": "integratedTerminal"
 		}
 	]
