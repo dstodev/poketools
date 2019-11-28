@@ -26,7 +26,7 @@ class TypeList:
         return effects
 
     @staticmethod
-    def _get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]) -> dict:
+    def _get_type_interaction_product(target_type: PokeType, interacting_types: typing.Iterable[PokeType]) -> float:
         multipliers = matrix[target_type, interacting_types]
 
         product = np.prod(multipliers)
@@ -34,7 +34,7 @@ class TypeList:
         return product
 
     @staticmethod
-    def _get_all_type_interactions(target_type: PokeType, target_self: bool):
+    def _get_all_type_interactions(target_type: PokeType, target_self: bool) -> dict:
         if target_self:
             array = matrix.transpose()
         else:
