@@ -21,4 +21,4 @@ class PokeType(IntEnum):
     Dragon = 15
     Dark = 16
     Fairy = 17
-    Unknown = 18
+    Unknown = 18  # Not in use, but listed on the wiki for some reason
